@@ -1,54 +1,31 @@
-#
+# Cordova Non-Renewing Subscription Demo
 
-In the below tutorial, I enter into details about installing Cordova and create a project. Feel free to skip those steps.
+## Getting Started
 
-## Install NodeJS and Cordova
+This guide assumes that you are using Mac OS X, since this is required for iOS development.
 
-Below is my way of doing it (on Linux/OSX), using nvm (the Node Version Manager). Feel free to use your own way.
+### Install NodeJS
 
-The idea is that a project should include all its required dependencies, including cordova. So it's easy for another developer (including future-you) to jump in and retrieve the exact same environment.
+Install either [NodeJS](https://nodejs.org/en/) or (better) the [Node Version Manager](https://github.com/creationix/nvm) (nvm).
 
-Create a project directory
+### Install other dependencies
 
-```bash
-mkdir my-project
-cd my-project`
-```
+Enter the project's root directory.
 
-Create a `setenv` file with the following content.
-
-```bash
-NODE_VERSION=v5.0.0
-nvm ls $NODE_VERSION || nvm install $NODE_VERSION
-nvm use $NODE_VERSION
-export PATH="$(pwd)/node_modules/.bin:$PATH"
-```
-
-Then run the following.
+Setup the path to use locally installed tools (at the appropriate version).
 
     . setenv
 
-    npm init
-    # Answer a few questions here...
+Download dependencies.
 
-    npm install --save cordova
+    npm install
 
-Now you have cordova installed in the node_modules folder, the `setenv` file took care of updating the `PATH` so it's accessible from everywhere (in a terminal in which you typed `. setenv` in this project folder).
+### Prepare the Cordova Project
 
-## Create the project
+From `cordova-app` directory, run:
 
-Let's create the project, add iOS and Android platforms.
+    cordova prepare
 
-    cordova create cordova-app cc.fovea.purchase.demo "Cordova Non-Renewing Subscription Demo"
-    cd cordova-app
-    cordova platform add ios --save
-    cordova platform add android --save
+### Build and run
 
-## Setup the iOS app on iTunes Connect
-
-## Setup the Android app on Google Play
-
-## Install the plugin
-
-    cordova plugin add cc.fovea.cordova.purchase --save --variable BILLING_KEY="MIIBaBcDeFgHiJkLmNoP/1234"
-
+As usual.

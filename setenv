@@ -1,4 +1,7 @@
-NODE_VERSION=v5.0.0
-nvm ls $NODE_VERSION || nvm install $NODE_VERSION
-nvm use $NODE_VERSION
+#!/bin/bash
+if which nvm; then
+    NODE_VERSION=v5.0.0
+    nvm ls $NODE_VERSION || nvm install $NODE_VERSION
+    nvm use $NODE_VERSION
+fi
 export PATH="$(pwd)/node_modules/.bin:$PATH"
