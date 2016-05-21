@@ -66,34 +66,80 @@
     this.el.innerHTML = html || '';
   };
 
-  var IOS_LIGHT_BLUE = '#54c7fc';
+  // var IOS_LIGHT_BLUE = '#54c7fc';
   var IOS_DARK_BLUE  = '#0076ff';
+  var ANDROID_GREEN  = '#4CAF50';
+  var ANDROID_LIGHT_GREEN = '#C8E6C9';
+  var PRIMARY_TEXT_COLOR   = '#212121';
+  var SECONDARY_TEXT_COLOR = '#727272';
+  var SEPARATOR_COLOR = '#B6B6B6';
+
+  var isAndroid = (navigator.userAgent.match(/Android/i)) == "Android";
+
+  var buttonStyle = function() {
+    if (isAndroid) {
+      return 'text-decoration:none;' +
+        'display: block;' +
+        'background-color: ' + ANDROID_GREEN + ';' +
+        'padding: 0.5em;' +
+        'margin-bottom: 1em;' +
+        'text-transform: uppercase;' +
+        'color: white;';
+    }
+    else { // Default style / iOS
+      return 'text-decoration:none;' +
+        'color:' + IOS_DARK_BLUE + ';';
+    }
+  };
+
+  var subtitleStyle = function() {
+    return 'color: ' + PRIMARY_TEXT_COLOR + ';';
+  };
+
+  var titleStyle = function() {
+    if (isAndroid)
+      return 'margin-left:-1em; margin-right:-1em; padding:1em; color:' + PRIMARY_TEXT_COLOR + '; background-color:' + ANDROID_LIGHT_GREEN + ';';
+    else
+      return 'color: ' + PRIMARY_TEXT_COLOR + ';';
+  };
 
   var Templates = {
 
-    el: function(type, baseClass, content, extraClass) {
-      var cname = extraClass ? className(baseClass, extraClass) : className("title");
-      return '<' + type + ' class="' + cname + '">' + content + '</' + type + '>';
+    el: function(type, baseClass, content, extraClass, style) {
+      var cname = extraClass ? className(baseClass, extraClass) : className(baseClass);
+      return '<' + type + ' class="' + cname + '" style="' + style + '">' + content + '</' + type + '>';
     },
 
     title: function(content, extraClass) {
-      return this.el('h3', 'title', content, extraClass);
+      return this.el('h3', 'title', content, extraClass, titleStyle());
     },
 
     subtitle: function(content, extraClass) {
-      return this.el('h5', 'subtitle', content, extraClass);
+      return this.el('h5', 'subtitle', content, extraClass, 'margin-bottom:0;' + subtitleStyle());
     },
 
-    message: function(content, extraClass, extraStyle) {
+    primaryMessage: function(content, extraClass, extraStyle) {
       var cname = extraClass ? className("message", extraClass) : className("message");
-      var style = 'font-size:0.9em;';
+      var style = 'font-size:0.9em; color:' + PRIMARY_TEXT_COLOR + '; font-weight:bold;';
       if (extraStyle)
         style += extraStyle;
       return '<p style="' + style + '" class="' + cname + '">' + content + '</p>';
     },
 
+    message: function(content, extraClass, extraStyle) {
+      var cname = extraClass ? className("message", extraClass) : className("message");
+      var style = 'font-size:0.9em; color:' + SECONDARY_TEXT_COLOR + ';';
+      if (extraStyle)
+        style += extraStyle;
+      return '<p style="' + style + '" class="' + cname + '">' + content + '</p>';
+    },
+
+    separator: function() {
+      return this.el('div', 'separator', '', null, 'height:1px; margin: 0.2em 0; background-color:' + SEPARATOR_COLOR + ';');
+    },
+
     button: function(label, cname, extraStyle) {
-      var style = 'text-decoration:none;color:' + IOS_DARK_BLUE + ';';
+      var style = buttonStyle();
       if (extraStyle)
         style += extraStyle;
       return '<p class="' + className(cname) + '"><a style="' + style + '" href="#" class="' + className(cname + '-link') + '">' + label + '</a></p>';
@@ -136,17 +182,17 @@
       var title = this.title('Subscription Status');
       var content = '';
       if (data.subscriber) {
-        content += this.message('Subscribed', null, 'font-weight:bold;');
+        content += this.primaryMessage('Subscribed', null);
         content += this.message('Expiry Date:<br/>' + data.expiryDate);
         content += this.button('Extend your subscription', 'renew', 'font-weight:bold;');
       }
       else if (data.expired) {
-        content += this.message('Subscription Expired', null, 'font-weight:bold');
+        content += this.primaryMessage('Subscription Expired', null);
         content += this.message('Expiry Date:<br/>' + data.expiryDate);
         content += this.button('Renew your subscription', 'renew', 'font-weight:bold;');
       }
       else {
-        content += this.message('Not Subscribed', null, 'font-weight:bold');
+        content += this.primaryMessage('Not Subscribed', null);
         content += this.button('Subscribe now!', 'renew', 'font-weight:bold;');
       }
       return this.dialogBox(title + content + this.closeButton());
@@ -159,6 +205,7 @@
         content += this.subtitle(escapeHtml(products[i].title));
         content += this.message(escapeHtml(products[i].description));
         content += this.button(products[i].price, 'buy-' + i, 'font-weight:bold');
+        content += this.separator();
       }
       return this.dialogBox(title + content + this.cancelButton());
     }
