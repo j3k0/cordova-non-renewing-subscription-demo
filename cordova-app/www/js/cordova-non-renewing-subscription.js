@@ -5,9 +5,8 @@
   // Define and export nonRenewing
   var nonRenewing = window.nonRenewing = {};
 
-  var log = function() {
-    var args = Array.prototype.concat.apply([ "[nonRenewing]" ], arguments);
-    console.log.apply(console.log, args);
+  var log = function(txt) {
+    console.log("[nonRenewing.js] " + txt);
   };
 
   // Create prefixed className from list of names, or a single names.
@@ -273,8 +272,9 @@
       if (err) {
         return this.view.showError("Can't process subscription: " + err);
       }
-      if (!expiryDate)
-        expiryDate = +new Date();
+      var now = +new Date();
+      if (!expiryDate || expiryDate < now)
+        expiryDate = now;
       expiryDate = expiryDate + nrProduct.duration * 1000;
 
       this.expiryStore.save(expiryDate, function(err) {
