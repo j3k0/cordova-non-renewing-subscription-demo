@@ -7,10 +7,13 @@ app.initialize = function() {
 
 app.onDeviceReady = function() {
     console.log('initializing the nonRenewing plugin');
-    /* store.register({
-        type: store.PAID_SUBSCRIPTION,
-        id: 'cc.fovea.purchase.subscription1'
-    }); */
+
+    // Initialize the non-renewing extension
+    // when 'deviceready' has been received.
+    // It takes a "products" option, which is
+    // an array containing products IDs and duration
+    // of the subscription in seconds.
+
     nonRenewing.initialize({
         verbosity: store.DEBUG,
         products: [{
@@ -22,11 +25,33 @@ app.onDeviceReady = function() {
         }]
     });
     this.showMainScreen();
+
+    nonRenewing.onStatusChange(function(status) {
+        if (status) {
+            document.getElementsByClassName('status')[0].innerHTML =
+                'isSubscribed: ' + status.subscriber + '\n' +
+                'expiryDate: ' + status.expiryDate + '\n';
+        }
+        else {
+            document.getElementsByClassName('status')[0].innerHTML =
+                'Status is Unknown';
+        }
+    });
 };
 
 app.showMainScreen = function() {
-    document.getElementsByClassName('app')[0].innerHTML = '<h1>Demo</h1><p><a href="#" class="manage-subscription">Manage your subscription</a></p>';
-    document.getElementsByClassName('manage-subscription')[0].addEventListener('click', function(event) {
+
+    // Create some dummy HTML page (for testing).
+    // Your content, somewhere, has a "Manage Subscription" button, right?
+
+    document.getElementsByClassName('app')[0].innerHTML =
+        '<h1>Demo</h1><p><a href="#" class="manage-subscription">Manage your subscription</a></p><pre class="status"></pre>';
+
+    // Make sure this button opens the subscription manager:
+    // nonRenewing.openSubscriptionManager();
+
+    var button = document.getElementsByClassName('manage-subscription')[0];
+    button.addEventListener('click', function(event) {
         console.log('showMainScreen -> openSubscriptionManager');
         event.preventDefault();
         nonRenewing.openSubscriptionManager();
